@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTT DATA — Skills Taxonomy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --border: #e8e2d9;
+    --text: #2d2a26;
+    --muted: #8a8580;
+    --g1: #56c9b0;
+    --g2: #4ab8d6;
+    --g3: #6c8ff8;
+    --g4: #9b7af4;
+    --g5: #e67a5c;
+    --g6: #e85d75;
+    --g7: #f5b731;
+    --active: var(--g1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Memphis-style background shapes */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(86,201,176,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(248,183,49,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(108,143,248,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .dept-label {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(26px, 4.5vw, 42px);
+    font-weight: 900;
+    color: var(--text);
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--g3), var(--g5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Tier nav */
+  .tier-nav {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .tier-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .tier-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .tier-btn:active { transform: translateY(-1px) scale(0.97); }
+
+  .tier-btn.active {
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  }
+
+  .tier-btn.active[data-tier="1"] { background: var(--g1); }
+  .tier-btn.active[data-tier="2"] { background: var(--g2); }
+  .tier-btn.active[data-tier="3"] { background: var(--g3); }
+  .tier-btn.active[data-tier="4"] { background: var(--g4); }
+  .tier-btn.active[data-tier="5"] { background: var(--g5); }
+  .tier-btn.active[data-tier="6"] { background: var(--g6); }
+  .tier-btn.active[data-tier="7"] { background: var(--g7); }
+
+  /* Main layout */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .main-layout { grid-template-columns: 1fr; }
+  }
+
+  /* Avatar stage */
+  .avatar-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 28px 20px;
+    border: 2px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    position: sticky;
+    top: 20px;
+  }
+
+  .avatar-frame {
+    position: relative;
+    width: 240px;
+    height: 300px;
+  }
+
+  /* Background circle behind avatar */
+  .avatar-bg-circle {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    transform: translate(-50%, -50%) scale(1);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    transition: background 0.6s cubic-bezier(0.34,1.56,0.64,1), transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    background: rgba(86,201,176,0.15);
+    animation: bg-breathe 3s ease-in-out infinite;
+  }
+
+  .avatar-bg-circle.pop {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+
+  @keyframes bg-breathe {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.04); }
+  }
+
+  /* Sparkle ring around bg circle */
+  .sparkle-ring {
+    position: absolute;
+    left: 50%; top: 55%;
+    transform: translate(-50%, -50%);
+    width: 220px; height: 220px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--active);
+    opacity: 0;
+  }
+
+  .sparkle.burst {
+    animation: sparkle-burst 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  @keyframes sparkle-burst {
+    0% { opacity: 0; transform: scale(0) translate(0, 0); }
+    40% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.5) translate(var(--tx), var(--ty)); }
+  }
+
+  .avatar-svg {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+    animation: avatar-idle 2.5s ease-in-out infinite;
+  }
+
+  .avatar-svg.entering {
+    animation: avatar-bounce-in 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  @keyframes avatar-idle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  @keyframes avatar-bounce-in {
+    0% { opacity: 0; transform: scale(0.7) translateY(20px); }
+    50% { opacity: 1; transform: scale(1.06) translateY(-6px); }
+    75% { transform: scale(0.97) translateY(2px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* Grade badge */
+  .grade-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    transition: background 0.4s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    background: var(--g1);
+  }
+
+  .grade-badge.pop {
+    animation: badge-pop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes badge-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); }
+    70% { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+
+  .grade-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text);
+    min-height: 24px;
+    transition: opacity 0.3s;
+  }
+
+  .grade-title.fade {
+    animation: text-fade-in 0.5s ease forwards;
+  }
+
+  @keyframes text-fade-in {
+    0% { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* XP Bar */
+  .xp-bar-wrap { width: 100%; }
+  .xp-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .xp-track {
+    height: 8px;
+    background: #ece8e1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .xp-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.34,1.56,0.64,1), background 0.5s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .xp-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: xp-shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes xp-shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+  }
+
+  /* Skills panel */
+  .skills-panel { display: flex; flex-direction: column; gap: 12px; }
+
+  .panel-header {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s, border-color 0.3s;
+    animation: card-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    cursor: default;
+  }
+
+  .skill-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+    border-color: var(--active);
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+    background: var(--active);
+    transition: width 0.25s;
+  }
+
+  .skill-card:hover::before {
+    width: 6px;
+  }
+
+  @keyframes card-in {
+    0% { opacity: 0; transform: translateY(24px) scale(0.95); }
+    60% { opacity: 1; transform: translateY(-4px) scale(1.01); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .skill-name {
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .skill-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  /* Decorative shapes */
+  .deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+  }
+  .deco-1 {
+    width: 300px; height: 300px;
+    border: 24px solid var(--g5);
+    border-radius: 50%;
+    top: -80px; right: -80px;
+  }
+  .deco-2 {
+    width: 200px; height: 200px;
+    background: var(--g7);
+    bottom: -60px; left: -60px;
+    transform: rotate(45deg);
+  }
+  .deco-3 {
+    width: 150px; height: 150px;
+    border: 16px solid var(--g3);
+    border-radius: 50%;
+    bottom: 20%; right: 5%;
+  }
+
+  /* Squiggle decorations */
+  .squiggle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.08;
+  }
+</style>
+</head>
+<body>
+
+<div class="deco deco-1"></div>
+<div class="deco deco-2"></div>
+<div class="deco deco-3"></div>
+
+<div class="container">
+  <header>
+    <div class="dept-label">Sales · Client Manager</div>
+    <h1>Skills <span>Taxonomy</span></h1>
+  </header>
+
+  <div class="tier-nav" id="tierNav"></div>
+
+  <div class="main-layout">
+    <div class="avatar-stage">
+      <div class="avatar-frame" id="avatarFrame">
+        <div class="avatar-bg-circle" id="bgCircle"></div>
+        <div class="sparkle-ring" id="sparkleRing"></div>
+        <svg class="avatar-svg" id="avatarSvg" viewBox="0 0 240 300" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="grade-badge" id="gradeBadge">Grade 1</div>
+      <div class="grade-title" id="gradeTitle"></div>
+      <div class="xp-bar-wrap">
+        <div class="xp-label">
+          <span>Proficiency</span>
+          <span id="xpVal">14%</span>
+        </div>
+        <div class="xp-track">
+          <div class="xp-fill" id="xpFill" style="width:14%; background:var(--g1);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skills-panel" id="skillsPanel">
+      <div class="panel-header">Skills at this grade</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const colors = ['','#56c9b0','#4ab8d6','#6c8ff8','#9b7af4','#e67a5c','#e85d75','#f5b731'];
+const colorsBg = ['','rgba(86,201,176,0.15)','rgba(74,184,214,0.15)','rgba(108,143,248,0.15)','rgba(155,122,244,0.15)','rgba(230,122,92,0.15)','rgba(232,93,117,0.15)','rgba(245,183,49,0.15)'];
+
+const gradeNames = [
+  '',
+  'Getting Started',
+  'Building Foundation',
+  'Independent Contributor',
+  'Skilled Practitioner',
+  'Team Leader',
+  'Strategic Advisor',
+  'Trusted Authority'
+];
+
+const tiers = {
+  1: {
+    skills: [
+      { name: "Client Access", desc: "Builds contact lists and supports outreach to target accounts. Engages operational stakeholders with prepared messages to introduce solutions." },
+      { name: "Client Vertical", desc: "Demonstrates general understanding of client industry structure and business drivers using available research." },
+      { name: "NTT Portfolio", desc: "Understands core NTT products and services. Uses standard sales materials to describe basic solution features." },
+      { name: "Client Discovery", desc: "Participates in discovery sessions, captures client requirements, and validates needs with guidance." },
+      { name: "Presentation & Engagement", desc: "Presents standard materials confidently to internal or mid-level client audiences. Communicates clearly with preparation support." }
+    ]
+  },
+  2: {
+    skills: [
+      { name: "Client Access", desc: "Develops entry points into client departments and supports early relationship building. Engages mid-management contacts with guidance from senior colleagues." },
+      { name: "Client Vertical", desc: "Applies knowledge of client's vertical processes and issues to support solution positioning. Links NTT offerings to specific industry challenges." },
+      { name: "NTT Portfolio", desc: "Links portfolio offerings to client needs and differentiates NTT capabilities from competitors." },
+      { name: "Client Discovery", desc: "Conducts structured discovery with LoB stakeholders to uncover visible challenges and data points." },
+      { name: "Presentation & Engagement", desc: "Delivers customized presentations to operational managers. Handles straightforward Q&A with confidence." }
+    ]
+  },
+  3: {
+    skills: [
+      { name: "Client Access", desc: "Builds trust and credibility across client LoBs. Independently opens new buying centres through contextual understanding of client pain points and business priorities." },
+      { name: "Client Vertical", desc: "Interprets vertical market trends, regulatory shifts, and value chain dynamics to tailor proposals for client relevance." },
+      { name: "NTT Portfolio", desc: "Integrates multiple portfolio areas into cohesive business solutions that demonstrate tangible client value." },
+      { name: "Client Discovery", desc: "Drives discovery conversations that reveal underlying business and IT issues impacting client performance. Synthesizes insights into solution framing." },
+      { name: "Presentation & Engagement", desc: "Presents persuasively to senior stakeholders. Adapts message to client context and handles objections effectively." }
+    ]
+  },
+  4: {
+    skills: [
+      { name: "Client Access", desc: "Expands access to executive and C-suite stakeholders. Positions NTT as a strategic partner by linking solutions to client transformation or business outcomes." },
+      { name: "Client Vertical", desc: "Advises clients using deep vertical insight to anticipate business risks and opportunities. Shapes go-to-market plans aligned with industry transformation." },
+      { name: "NTT Portfolio", desc: "Advises clients on optimal portfolio mix to achieve strategic outcomes such as transformation, efficiency, or innovation." },
+      { name: "Client Discovery", desc: "Leads multi-stakeholder discovery to identify cross-functional pain points and emerging business risks. Connects findings to measurable business value." },
+      { name: "Presentation & Engagement", desc: "Engages C-suite audiences with consultative storytelling and strategic framing. Inspires confidence and guides decisions." }
+    ]
+  },
+  5: {
+    skills: [
+      { name: "Client Access", desc: "Shapes strategic access strategy across multiple client organizations. Builds executive-to-executive relationships that influence enterprise-level decisions and long-term account strategy." },
+      { name: "Client Vertical", desc: "Serves as industry thought leader influencing client strategy and NTT's vertical positioning. Establishes NTT presence in strategic industry ecosystems." },
+      { name: "NTT Portfolio", desc: "Shapes portfolio strategy and innovation roadmap with client input. Co-creates new value propositions and strategic solutions with key accounts." },
+      { name: "Client Discovery", desc: "Shapes client agenda by uncovering latent needs and reframing challenges into strategic transformation opportunities." },
+      { name: "Presentation & Engagement", desc: "Advises boards or executive committees through high-impact presentations that influence strategic direction and deepen trust in NTT as a partner." }
+    ]
+  },
+  6: {
+    skills: [
+      { name: "Client Access", desc: "Defines enterprise-level client access strategy. Mentors senior sales professionals on executive relationship building." },
+      { name: "Client Vertical", desc: "Shapes NTT's industry positioning across multiple verticals. Recognised as a go-to authority on industry trends." },
+      { name: "NTT Portfolio", desc: "Drives portfolio evolution based on market signals and client co-creation. Influences product roadmap decisions." },
+      { name: "Client Discovery", desc: "Defines discovery frameworks used across the organisation. Coaches teams on extracting strategic insight from client engagements." },
+      { name: "Presentation & Engagement", desc: "Sets the standard for executive engagement across NTT. Personally leads highest-stakes client interactions." }
+    ]
+  },
+  7: {
+    skills: [
+      { name: "Client Access", desc: "Sets organisational standards for strategic client access. Builds relationships that shape NTT's long-term market position." },
+      { name: "Client Vertical", desc: "Recognised industry authority. Establishes NTT's strategic presence in key industry ecosystems globally." },
+      { name: "NTT Portfolio", desc: "Owns portfolio strategy alignment with enterprise growth. Co-creates next-generation solutions with strategic accounts." },
+      { name: "Client Discovery", desc: "Defines NTT's approach to strategic discovery. Shapes how the organisation identifies and captures transformational opportunities." },
+      { name: "Presentation & Engagement", desc: "Influences strategic direction at board level. Recognised authority on consultative executive engagement." }
+    ]
+  }
+};
+
+// ============ CARTOON AVATAR BUILDER ============
+// Gravity Falls style: round shapes, thick outlines, big heads, chunky bodies, expressive faces, visible hair
+
+function buildAvatar(grade) {
+  const s = '#2d2a26'; // stroke color
+  const sw = 4; // thick cartoon outlines
+  const skin = '#f5c9a0';
+  const skinDark = '#dba87a';
+  const hairColor = '#3a2010';
+  const hairHi = '#5a3820'; // highlight
+  const shirtColors = ['','#56c9b0','#4ab8d6','#6c8ff8','#7c6ae0','#e67a5c','#c43c5a','#d4960a'];
+  const sc = shirtColors[grade]; // shirt color
+  const accent = colors[grade];
+  const white = '#fff';
+
+  let v = '';
+
+  // ========== BODY ==========
+  if (grade <= 2) {
+    // Hoodie — chunky round body
+    // Arms behind body
+    v += `<ellipse cx="52" cy="220" rx="18" ry="40" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<ellipse cx="188" cy="220" rx="18" ry="40" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Body — big round torso
+    v += `<ellipse cx="120" cy="220" rx="58" ry="55" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Hoodie pocket
+    v += `<path d="M92 228 Q120 240 148 228" stroke="${s}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    // Hoodie center line
+    v += `<line x1="120" y1="168" x2="120" y2="270" stroke="${s}" stroke-width="2" opacity="0.3"/>`;
+    // Hoodie string
+    v += `<line x1="114" y1="172" x2="110" y2="192" stroke="${s}" stroke-width="2" stroke-linecap="round"/>`;
+    v += `<line x1="126" y1="172" x2="130" y2="192" stroke="${s}" stroke-width="2" stroke-linecap="round"/>`;
+    // Hands
+    v += `<circle cx="52" cy="262" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<circle cx="188" cy="262" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+  } else if (grade <= 4) {
+    // Button shirt — still chunky
+    // Arms
+    v += `<ellipse cx="50" cy="218" rx="17" ry="38" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<ellipse cx="190" cy="218" rx="17" ry="38" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Body
+    v += `<ellipse cx="120" cy="218" rx="56" ry="52" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Collar — V shape
+    v += `<polygon points="104,168 120,194 136,168" fill="${white}" stroke="${s}" stroke-width="2.5"/>`;
+    // Buttons
+    v += `<circle cx="120" cy="204" r="3.5" fill="${s}"/>`;
+    v += `<circle cx="120" cy="222" r="3.5" fill="${s}"/>`;
+    v += `<circle cx="120" cy="240" r="3.5" fill="${s}"/>`;
+    // Hands
+    v += `<circle cx="50" cy="258" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<circle cx="190" cy="258" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Tie at grade 4
+    if (grade === 4) {
+      v += `<polygon points="115,194 120,248 125,194" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+      v += `<polygon points="114,248 120,262 126,248" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    }
+  } else if (grade <= 6) {
+    // Blazer — structured but still round
+    // Shirt underneath
+    v += `<ellipse cx="120" cy="218" rx="56" ry="52" fill="#eae4da" stroke="${s}" stroke-width="${sw}"/>`;
+    // Tie
+    v += `<polygon points="115,182 120,246 125,182" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    v += `<polygon points="113,246 120,262 127,246" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    // Blazer left
+    v += `<path d="M64 175 Q64 168 76 168 L108 168 L96 270 Q64 270 64 258 Z" fill="${sc}" stroke="${s}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    // Blazer right
+    v += `<path d="M176 175 Q176 168 164 168 L132 168 L144 270 Q176 270 176 258 Z" fill="${sc}" stroke="${s}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    // Lapels
+    v += `<polygon points="108,168 96,210 108,200" fill="${s}" opacity="0.15"/>`;
+    v += `<polygon points="132,168 144,210 132,200" fill="${s}" opacity="0.15"/>`;
+    // Arms
+    v += `<ellipse cx="48" cy="215" rx="17" ry="38" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<ellipse cx="192" cy="215" rx="17" ry="38" fill="${sc}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Hands
+    v += `<circle cx="48" cy="256" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<circle cx="192" cy="256" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Pocket square (grade 5+)
+    v += `<rect x="69" y="200" width="14" height="11" rx="2" fill="${white}" stroke="${s}" stroke-width="1.5"/>`;
+    // Medal (grade 6)
+    if (grade === 6) {
+      v += `<circle cx="78" cy="224" r="6" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+      v += `<circle cx="78" cy="224" r="3" fill="${white}"/>`;
+    }
+  } else {
+    // Grade 7 — BOSS suit + cape aura
+    // Cape
+    v += `<path d="M40 170 Q30 170 25 185 L18 280 Q18 290 28 290 L212 290 Q222 290 222 280 L215 185 Q210 170 200 170 Z" fill="${accent}" opacity="0.2" stroke="${s}" stroke-width="2"/>`;
+    // Shirt
+    v += `<ellipse cx="120" cy="218" rx="56" ry="52" fill="#f0eae0" stroke="${s}" stroke-width="${sw}"/>`;
+    // Gold tie
+    v += `<polygon points="114,182 120,248 126,182" fill="${accent}" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<polygon points="112,248 120,264 128,248" fill="${accent}" stroke="${s}" stroke-width="2.5"/>`;
+    // Suit jacket — dark
+    v += `<path d="M62 175 Q62 166 74 166 L106 166 L94 270 Q62 270 62 258 Z" fill="#1a1816" stroke="${s}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    v += `<path d="M178 175 Q178 166 166 166 L134 166 L146 270 Q178 270 178 258 Z" fill="#1a1816" stroke="${s}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    // Gold lapel trim
+    v += `<line x1="106" y1="166" x2="94" y2="210" stroke="${accent}" stroke-width="2.5"/>`;
+    v += `<line x1="134" y1="166" x2="146" y2="210" stroke="${accent}" stroke-width="2.5"/>`;
+    // Gold epaulettes
+    v += `<ellipse cx="62" cy="178" rx="12" ry="6" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    v += `<ellipse cx="178" cy="178" rx="12" ry="6" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    // Arms
+    v += `<ellipse cx="44" cy="214" rx="17" ry="38" fill="#1a1816" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<ellipse cx="196" cy="214" rx="17" ry="38" fill="#1a1816" stroke="${s}" stroke-width="${sw}"/>`;
+    // Hands
+    v += `<circle cx="44" cy="254" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    v += `<circle cx="196" cy="254" r="11" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Medals
+    v += `<circle cx="74" cy="200" r="6" fill="${accent}" stroke="${s}" stroke-width="2"/>`;
+    v += `<circle cx="74" cy="200" r="3" fill="${white}"/>`;
+    v += `<circle cx="74" cy="215" r="5" fill="#4ab8d6" stroke="${s}" stroke-width="1.5"/>`;
+    v += `<circle cx="74" cy="215" r="2.5" fill="${white}"/>`;
+    // Stars
+    v += `<text x="28" y="130" font-size="18" fill="${accent}" opacity="0.8">★</text>`;
+    v += `<text x="200" y="135" font-size="15" fill="${accent}" opacity="0.6">★</text>`;
+    v += `<text x="110" y="50" font-size="14" fill="${accent}" opacity="0.5">★</text>`;
+    v += `<text x="178" y="82" font-size="10" fill="${accent}" opacity="0.4">★</text>`;
+  }
+
+  // ========== LEGS — short and chunky ==========
+  const pantColor = grade >= 5 ? '#1a1816' : '#3a3530';
+  v += `<rect x="90" y="262" width="24" height="28" rx="8" fill="${pantColor}" stroke="${s}" stroke-width="${sw}"/>`;
+  v += `<rect x="126" y="262" width="24" height="28" rx="8" fill="${pantColor}" stroke="${s}" stroke-width="${sw}"/>`;
+
+  // ========== SHOES — round cartoon shoes ==========
+  const shoeColor = grade >= 5 ? '#0d0c0a' : '#2d2a26';
+  v += `<ellipse cx="100" cy="292" rx="18" ry="9" fill="${shoeColor}" stroke="${s}" stroke-width="${sw}"/>`;
+  v += `<ellipse cx="140" cy="292" rx="18" ry="9" fill="${shoeColor}" stroke="${s}" stroke-width="${sw}"/>`;
+
+  // ========== NECK ==========
+  v += `<rect x="108" y="148" width="24" height="24" rx="8" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+
+  // ========== HEAD — BIG round head, Gravity Falls style ==========
+  v += `<ellipse cx="120" cy="110" rx="52" ry="50" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+
+  // ========== EARS ==========
+  v += `<ellipse cx="68" cy="118" rx="10" ry="12" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+  v += `<ellipse cx="172" cy="118" rx="10" ry="12" fill="${skin}" stroke="${s}" stroke-width="${sw}"/>`;
+  // Inner ear
+  v += `<ellipse cx="68" cy="119" rx="5" ry="7" fill="${skinDark}" stroke="none"/>`;
+  v += `<ellipse cx="172" cy="119" rx="5" ry="7" fill="${skinDark}" stroke="none"/>`;
+
+  // ========== HAIR — BIG, voluminous, visible ==========
+  if (grade <= 3) {
+    // Chunky messy hair — big round poof on top + sideburns
+    v += `<path d="M66 105 Q64 55 120 48 Q176 55 174 105" fill="${hairColor}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Hair volume on top — big rounded bumps
+    v += `<ellipse cx="96" cy="58" rx="22" ry="16" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<ellipse cx="140" cy="54" rx="24" ry="18" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<ellipse cx="120" cy="50" rx="18" ry="14" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    // Hair highlight streaks
+    v += `<path d="M100 56 Q108 48 116 56" stroke="${hairHi}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    v += `<path d="M132 52 Q140 44 148 52" stroke="${hairHi}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    // Sideburns
+    v += `<path d="M68 90 Q62 90 60 108 Q58 120 66 118" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<path d="M172 90 Q178 90 180 108 Q182 120 174 118" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+  } else if (grade <= 5) {
+    // Styled, swept back — still big but neater
+    v += `<path d="M66 105 Q64 50 120 44 Q176 50 174 105" fill="${hairColor}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Slicked back bumps
+    v += `<ellipse cx="104" cy="52" rx="20" ry="14" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<ellipse cx="140" cy="48" rx="22" ry="16" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    // Quiff/pompadour
+    v += `<path d="M108 50 Q120 32 145 46" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    // Highlight
+    v += `<path d="M118 46 Q128 38 138 46" stroke="${hairHi}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    // Neat sideburns
+    v += `<path d="M68 90 Q64 92 63 108 Q62 116 68 116" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<path d="M172 90 Q176 92 177 108 Q178 116 172 116" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+  } else {
+    // Distinguished — neat, silver temples, still voluminous
+    v += `<path d="M66 105 Q64 48 120 42 Q176 48 174 105" fill="${hairColor}" stroke="${s}" stroke-width="${sw}"/>`;
+    // Neat rounded top
+    v += `<ellipse cx="120" cy="46" rx="32" ry="16" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    v += `<path d="M100 48 Q120 30 150 44" fill="${hairColor}" stroke="${s}" stroke-width="3"/>`;
+    // Highlight
+    v += `<path d="M112 42 Q125 34 138 42" stroke="${hairHi}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    // Silver temple streaks
+    v += `<path d="M68 88 Q62 90 60 108 Q58 118 68 116" fill="#a8a0a0" stroke="${s}" stroke-width="3"/>`;
+    v += `<path d="M172 88 Q178 90 180 108 Q182 118 172 116" fill="#a8a0a0" stroke="${s}" stroke-width="3"/>`;
+    // Extra silver streaks
+    v += `<path d="M72 78 Q68 84 66 94" stroke="#c0b8b0" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    v += `<path d="M168 78 Q172 84 174 94" stroke="#c0b8b0" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  }
+
+  // ========== EYES — BIG expressive cartoon eyes ==========
+  const eyeW = grade <= 2 ? 14 : (grade <= 5 ? 13 : 12);
+  const eyeH = grade <= 2 ? 16 : (grade <= 5 ? 15 : 14);
+  const pupilR = grade <= 2 ? 7 : (grade <= 5 ? 6.5 : 6);
+  const eyeY = 112;
+
+  // Eye whites
+  v += `<ellipse cx="100" cy="${eyeY}" rx="${eyeW}" ry="${eyeH}" fill="${white}" stroke="${s}" stroke-width="${sw}"/>`;
+  v += `<ellipse cx="140" cy="${eyeY}" rx="${eyeW}" ry="${eyeH}" fill="${white}" stroke="${s}" stroke-width="${sw}"/>`;
+  // Pupils
+  v += `<circle cx="103" cy="${eyeY+1}" r="${pupilR}" fill="#1a0a00"/>`;
+  v += `<circle cx="143" cy="${eyeY+1}" r="${pupilR}" fill="#1a0a00"/>`;
+  // Shine dots — big and small
+  v += `<circle cx="106" cy="${eyeY-3}" r="3" fill="${white}"/>`;
+  v += `<circle cx="146" cy="${eyeY-3}" r="3" fill="${white}"/>`;
+  v += `<circle cx="100" cy="${eyeY+2}" r="1.5" fill="${white}"/>`;
+  v += `<circle cx="140" cy="${eyeY+2}" r="1.5" fill="${white}"/>`;
+
+  // ========== EYEBROWS — get bolder ==========
+  if (grade <= 2) {
+    v += `<path d="M86 95 Q100 88 114 95" stroke="${s}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    v += `<path d="M126 95 Q140 88 154 95" stroke="${s}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  } else if (grade <= 4) {
+    v += `<path d="M84 93 Q100 85 116 93" stroke="${s}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    v += `<path d="M124 93 Q140 85 156 93" stroke="${s}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  } else {
+    // Power brows — thicker, more angular
+    v += `<path d="M82 92 Q100 82 118 91" stroke="${s}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+    v += `<path d="M122 91 Q140 82 158 92" stroke="${s}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  }
+
+  // ========== NOSE — cute round blob ==========
+  v += `<ellipse cx="120" cy="126" rx="6" ry="5" fill="${skinDark}" stroke="${s}" stroke-width="2"/>`;
+  // Nostrils
+  v += `<circle cx="117" cy="127" r="1.5" fill="${s}" opacity="0.4"/>`;
+  v += `<circle cx="123" cy="127" r="1.5" fill="${s}" opacity="0.4"/>`;
+
+  // ========== MOUTH — grows more confident ==========
+  if (grade <= 2) {
+    // Small smile
+    v += `<path d="M109 136 Q120 144 131 136" stroke="${s}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    // Cheek blush
+    v += `<ellipse cx="82" cy="126" rx="8" ry="5" fill="#f0a0a0" opacity="0.3"/>`;
+    v += `<ellipse cx="158" cy="126" rx="8" ry="5" fill="#f0a0a0" opacity="0.3"/>`;
+  } else if (grade <= 4) {
+    // Bigger smile
+    v += `<path d="M105 135 Q120 148 135 135" stroke="${s}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    // Tooth peeking
+    v += `<path d="M112 137 Q120 144 128 137" fill="${white}" stroke="none"/>`;
+  } else {
+    // Big confident grin — teeth showing
+    v += `<path d="M100 134 Q120 152 140 134" stroke="${s}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    // Teeth
+    v += `<path d="M106 136 Q120 148 134 136" fill="${white}" stroke="none"/>`;
+    v += `<line x1="120" y1="136" x2="120" y2="145" stroke="${s}" stroke-width="1" opacity="0.3"/>`;
+  }
+
+  // ========== PROPS ==========
+  if (grade === 1) {
+    // Coffee mug — cute oversized
+    v += `<rect x="182" y="240" width="20" height="24" rx="4" fill="${white}" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<path d="M202 246 Q212 246 212 254 Q212 262 202 262" stroke="${s}" stroke-width="2.5" fill="none"/>`;
+    // Steam
+    v += `<path d="M188 236 Q190 230 188 224" stroke="${s}" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>`;
+    v += `<path d="M194 234 Q196 228 194 222" stroke="${s}" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>`;
+  } else if (grade === 2) {
+    // Phone
+    v += `<rect x="182" y="238" width="20" height="32" rx="4" fill="${s}" stroke="${s}" stroke-width="2"/>`;
+    v += `<rect x="184" y="242" width="16" height="22" rx="2" fill="${accent}" opacity="0.35"/>`;
+    v += `<circle cx="192" cy="266" r="2" fill="#555"/>`;
+  } else if (grade === 3) {
+    // Laptop
+    v += `<rect x="174" y="236" width="36" height="24" rx="3" fill="#3a3530" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<rect x="177" y="239" width="30" height="17" rx="2" fill="${accent}" opacity="0.2"/>`;
+    v += `<rect x="170" y="260" width="44" height="4" rx="2" fill="#3a3530" stroke="${s}" stroke-width="2"/>`;
+  } else if (grade === 4) {
+    // Chart/graph prop
+    v += `<rect x="180" y="234" width="28" height="32" rx="3" fill="${white}" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<polyline points="184,258 190,250 196,254 202,242" stroke="${accent}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  } else if (grade >= 5 && grade <= 6) {
+    // Briefcase
+    v += `<rect x="16" y="248" width="30" height="22" rx="5" fill="${accent}" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<rect x="24" y="244" width="14" height="8" rx="3" fill="none" stroke="${s}" stroke-width="2.5"/>`;
+    v += `<line x1="31" y1="254" x2="31" y2="264" stroke="${s}" stroke-width="2"/>`;
+  } else {
+    // Glowing orb of power
+    v += `<circle cx="40" cy="248" r="14" fill="${accent}" opacity="0.12"/>`;
+    v += `<circle cx="40" cy="248" r="10" fill="${accent}" opacity="0.2"/>`;
+    v += `<circle cx="40" cy="248" r="6" fill="${accent}" opacity="0.5"/>`;
+    v += `<circle cx="40" cy="248" r="3" fill="${white}" opacity="0.9"/>`;
+  }
+
+  return v;
+}
+
+// ============ INIT ============
+const nav = document.getElementById('tierNav');
+for (let i = 1; i <= 7; i++) {
+  const btn = document.createElement('button');
+  btn.className = `tier-btn${i === 1 ? ' active' : ''}`;
+  btn.dataset.tier = i;
+  btn.textContent = `Grade ${i}`;
+  btn.onclick = () => setTier(i);
+  nav.appendChild(btn);
+}
+
+let currentTier = 0;
+setTier(1);
+
+function setTier(tier) {
+  if (tier === currentTier) return;
+  currentTier = tier;
+
+  // Update CSS variable
+  document.documentElement.style.setProperty('--active', colors[tier]);
+
+  // === AVATAR BOUNCE-IN ===
+  const avatarSvg = document.getElementById('avatarSvg');
+  avatarSvg.classList.remove('entering');
+  avatarSvg.style.animation = 'none';
+  avatarSvg.offsetHeight; // force reflow
+  avatarSvg.classList.add('entering');
+  // After bounce-in, resume idle
+  setTimeout(() => {
+    avatarSvg.classList.remove('entering');
+    avatarSvg.style.animation = '';
+  }, 650);
+
+  // Update avatar content
+  avatarSvg.innerHTML = buildAvatar(tier);
+
+  // === BG CIRCLE POP ===
+  const bgCircle = document.getElementById('bgCircle');
+  bgCircle.style.background = colorsBg[tier];
+  bgCircle.classList.add('pop');
+  setTimeout(() => bgCircle.classList.remove('pop'), 500);
+
+  // === SPARKLE BURST ===
+  fireSparkles(tier);
+
+  // === BADGE POP ===
+  const badge = document.getElementById('gradeBadge');
+  badge.textContent = `Grade ${tier}`;
+  badge.style.background = colors[tier];
+  badge.classList.remove('pop');
+  badge.offsetHeight;
+  badge.classList.add('pop');
+
+  // === TITLE FADE ===
+  const title = document.getElementById('gradeTitle');
+  title.classList.remove('fade');
+  title.offsetHeight;
+  title.textContent = gradeNames[tier];
+  title.classList.add('fade');
+
+  // === XP BAR ===
+  const pct = Math.round((tier / 7) * 100);
+  document.getElementById('xpVal').textContent = pct + '%';
+  const fill = document.getElementById('xpFill');
+  fill.style.width = pct + '%';
+  fill.style.background = colors[tier];
+
+  // === SKILL CARDS with stagger ===
+  const panel = document.getElementById('skillsPanel');
+  panel.innerHTML = '<div class="panel-header">Skills at this grade</div>';
+  tiers[tier].skills.forEach((skill, i) => {
+    const card = document.createElement('div');
+    card.className = 'skill-card';
+    card.style.animationDelay = `${i * 100}ms`;
+    card.innerHTML = `
+      <div class="skill-name">${skill.name}</div>
+      <div class="skill-desc">${skill.desc}</div>
+    `;
+    panel.appendChild(card);
+  });
+
+  // Update buttons
+  document.querySelectorAll('.tier-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.tier) === tier);
+  });
+}
+
+// === SPARKLE EFFECT ===
+function fireSparkles(tier) {
+  const ring = document.getElementById('sparkleRing');
+  ring.innerHTML = '';
+  const count = 8;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'sparkle';
+    const angle = (i / count) * Math.PI * 2;
+    const r = 100;
+    const x = 110 + Math.cos(angle) * r - 3;
+    const y = 110 + Math.sin(angle) * r - 3;
+    const tx = Math.cos(angle) * 30 + 'px';
+    const ty = Math.sin(angle) * 30 + 'px';
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+    dot.style.setProperty('--tx', tx);
+    dot.style.setProperty('--ty', ty);
+    dot.style.background = colors[tier];
+    dot.style.animationDelay = (i * 40) + 'ms';
+    ring.appendChild(dot);
+    requestAnimationFrame(() => dot.classList.add('burst'));
+  }
+}
+</script>
+</body>
+</html>
